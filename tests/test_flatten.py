@@ -46,3 +46,13 @@ def test_nested():
         for x in range(4):
             test = [1, test]
         flatten_nested(test, max_depth=3)
+
+def test_fix():
+    assert flatten_nested([[1], [2]], max_depth=1) == [1,2]
+
+def test_ids():
+    a = [1,2]
+    b = [a]
+    a.extend(b)
+    with pytest.raises(ValueError):
+        flatten_nested(a)

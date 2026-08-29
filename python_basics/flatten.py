@@ -1,14 +1,18 @@
-def expand_nested(value: list | tuple, cur_dept, max_dept):
+def expand_nested(value: list | tuple, ids :list,  cur_dept:int , max_dept:int):
     result = []
     if cur_dept > max_dept:
         raise ValueError("exceed max depth")
+    if id(value) in ids:
+        raise ValueError("loop ref")
+    ids.append(id(value))
     for x in value:
         if isinstance(x, (list, tuple)):
-            cur_dept, item_list = expand_nested(x, cur_dept + 1, max_dept)
+            item_list = expand_nested(x, ids, cur_dept + 1, max_dept)
             result.extend(item_list)
         else:
             result.append(x)
-    return cur_dept, result
+    ids.pop()
+    return result
 
 
 def flatten_nested(value: list | tuple, *, max_depth: int = 100) -> list:
@@ -17,8 +21,9 @@ def flatten_nested(value: list | tuple, *, max_depth: int = 100) -> list:
     if max_depth < 0:
         raise ValueError("invalid max_depth value")
 
-    final_dept, result = expand_nested(value, 0, max_depth)
-    print(f"final_dept = {final_dept}, result = {result}")
+    id_trace = []
+    result = expand_nested(value, id_trace , 0, max_depth)
+    print(f" result = {result}")
     return result
 
 
